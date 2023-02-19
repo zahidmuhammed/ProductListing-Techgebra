@@ -26,6 +26,7 @@ export default function Home({ products }) {
       `https://dummyjson.com/products?limit=30&skip=${currentItems}`
     );
     const data = await response.json();
+    setProductList(data);
   };
 
   const getCategories = async () => {
@@ -98,24 +99,24 @@ export default function Home({ products }) {
         </div>
         <div className="mx-32 px-16 my-5 grid grid-cols-2 md:grid-cols-5 gap-4">
           {productList?.products?.map((item, index) => (
-            // <Link href={`/products/${item.id}`}>
-            <div
-              className=" p-2 border border-gray-900 flex flex-col justify-between h-full rounded"
-              key={index}
-            >
-              <div className="flex justify-center">
-                <img
-                  src={item.thumbnail}
-                  height={100}
-                  width={100}
-                  className="object-contain"
-                />
+            <Link href={`/products/${item.id}`}>
+              <div
+                className=" p-2 border border-gray-900 flex flex-col justify-between h-full rounded"
+                key={index}
+              >
+                <div className="flex justify-center">
+                  <img
+                    src={item.thumbnail}
+                    height={100}
+                    width={100}
+                    className="object-contain"
+                  />
+                </div>
+                <div className="bg-red-300 text-center">{item.title}</div>
+                <div className="text-sm">{item.description}</div>
+                <div>₹ {item.price}</div>
               </div>
-              <div className="bg-red-300 text-center">{item.title}</div>
-              <div className="text-sm">{item.description}</div>
-              <div>₹ {item.price}</div>
-            </div>
-            // </Link>
+            </Link>
           ))}
         </div>
         <div className="py-5 flex justify-center">
