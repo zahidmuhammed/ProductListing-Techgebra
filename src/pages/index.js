@@ -9,12 +9,34 @@ const inter = Inter({ subsets: ["latin"] });
 export default function Home({ products }) {
   const [productName, setProductName] = useState("");
   const [productList, setProductList] = useState([]);
+  const [categoriesList, setCategoriesList] = useState([]);
+  const [categoryNow, setCategoryNow] = useState("");
+
+  console.log(categoryNow);
 
   useEffect(() => {
     setProductList(products);
+    getCategories();
   }, []);
 
-  // console.log(products);
+  useEffect(() => {
+    categoryNow === "" ? setProductList(products) : getCategoriesByName();
+  }, [categoryNow]);
+
+  const getCategories = async () => {
+    const response = await fetch(`https://dummyjson.com/products/categories`);
+    const data = await response.json();
+    setCategoriesList(data);
+  };
+
+  const getCategoriesByName = async () => {
+    const response = await fetch(
+      `https://dummyjson.com/products/category/${categoryNow}`
+    );
+    const data = await response.json();
+    setProductList(data);
+  };
+
   const onSearchHandle = async () => {
     const response = await fetch(
       `https://dummyjson.com/products/search?q=${productName}`
@@ -55,22 +77,39 @@ export default function Home({ products }) {
             Search
           </button>
         </div>
-        <div className="mx-32 px-16 grid grid-cols-2 md:grid-cols-5">
+        <div className="flex justify-center">
+          <div className="px-4">Category</div>
+          <select
+            value={categoryNow}
+            onChange={(e) => {
+              setCategoryNow(e.target.value);
+            }}
+          >
+            <option value="">All</option>
+            {categoriesList.map((item, index) => (
+              <option value={item}>{item}</option>
+            ))}
+          </select>
+        </div>
+        <div className="mx-32 px-16 my-5 grid grid-cols-2 md:grid-cols-5 gap-4">
           {productList?.products?.map((item, index) => (
             // <Link href={`/products/${item.id}`}>
-            <div className="h-auto p-5" key={index}>
+            <div
+              className=" p-2 border border-gray-900 flex flex-col justify-between h-full rounded"
+              key={index}
+            >
               <div>
                 {/* <Image
                   src={item?.thumbnail}
                   className="h-20 w-20"
-                  width={30}
-                  height={30}
+                  width={50}
+                  height={50}
                   alt=""
                 /> */}
               </div>
-              <div>{item.title}</div>
-              <div>{item.description}</div>
-              <div>{item.price}</div>
+              <div className="bg-red-300">{item.title}</div>
+              <div className="text-sm">{item.description}</div>
+              <div>₹ {item.price}</div>
             </div>
             // </Link>
           ))}
@@ -79,18 +118,6 @@ export default function Home({ products }) {
     </>
   );
 }
-
-// export async function getStaticProps() {
-//   const response = await fetch("https://dummyjson.com/products");
-//   const data = await response.json();
-
-//   console.log(data);
-//   let data = fetch("https://dummyjson.com/products").then((res) => res.json());
-
-//   return {
-//     props: { products: data },
-//   };
-// }                                                                                                                                                                                                                                                                                                 `
 
 export async function getStaticProps() {
   const response = await fetch("https://dummyjson.com/products");
