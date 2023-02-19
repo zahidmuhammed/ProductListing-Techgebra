@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
 import Head from "next/head";
-import { Inter } from "@next/font/google";
 import Link from "next/link";
+import { Inter } from "@next/font/google";
+import { useEffect, useState } from "react";
+import { AiFillStar } from "react-icons/ai";
+import { CgChevronLeftO, CgChevronRightO } from "react-icons/cg";
 
-const inter = Inter({ subsets: ["latin"] });
+// const inter = Inter({ subsets: ["latin"] });
 
 export default function Home({ products }) {
   const [productName, setProductName] = useState("");
@@ -97,11 +99,11 @@ export default function Home({ products }) {
             ))}
           </select>
         </div>
-        <div className="mx-32 px-16 my-5 grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="mx-6 md:mx-16 lg:mx-32 md:px-16 my-5 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5  gap-4">
           {productList?.products?.map((item, index) => (
             <Link href={`/products/${item.id}`}>
               <div
-                className=" p-2 border border-gray-900 flex flex-col justify-between h-full rounded"
+                className=" border border-gray-500 flex flex-col  h-full rounded"
                 key={index}
               >
                 <div className="flex justify-center">
@@ -109,12 +111,21 @@ export default function Home({ products }) {
                     src={item.thumbnail}
                     height={100}
                     width={100}
-                    className="object-contain"
+                    className="object-fill h-40 w-full"
                   />
                 </div>
-                <div className="bg-red-300 text-center">{item.title}</div>
-                <div className="text-sm">{item.description}</div>
-                <div>₹ {item.price}</div>
+                <div className="bg-red-300 mb-3 py-1 text-center font-bold">
+                  {item.title}
+                </div>
+                <div className="p-1 h-full">
+                  <div className="flex justify-between">
+                    <div>₹ {item.price}</div>
+                    <div className="flex justify-center items-center text-sm">
+                      {item.rating} <AiFillStar size={15} color="#ffbd19" />
+                    </div>
+                  </div>
+                  <div className="text-sm">{item.description}</div>
+                </div>
               </div>
             </Link>
           ))}
@@ -124,13 +135,13 @@ export default function Home({ products }) {
             className="px-3"
             onClick={() => setCurrentItems(currentItems - 30)}
           >
-            Prev
+            <CgChevronLeftO size={30} className="cursor-pointer" />
           </div>
           <div
             className="px-3"
             onClick={() => setCurrentItems(currentItems + 30)}
           >
-            Next
+            <CgChevronRightO size={30} className="cursor-pointer" />
           </div>
         </div>
       </main>
