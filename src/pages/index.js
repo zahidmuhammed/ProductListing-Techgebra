@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import Head from "next/head";
-import Image from "next/image";
 import { Inter } from "@next/font/google";
 import Link from "next/link";
 
@@ -11,8 +10,7 @@ export default function Home({ products }) {
   const [productList, setProductList] = useState([]);
   const [categoriesList, setCategoriesList] = useState([]);
   const [categoryNow, setCategoryNow] = useState("");
-
-  console.log(categoryNow);
+  const [currentItems, setCurrentItems] = useState(30);
 
   useEffect(() => {
     setProductList(products);
@@ -22,6 +20,13 @@ export default function Home({ products }) {
   useEffect(() => {
     categoryNow === "" ? setProductList(products) : getCategoriesByName();
   }, [categoryNow]);
+
+  const getPaginationData = async () => {
+    const response = await fetch(
+      `https://dummyjson.com/products?limit=30&skip=${currentItems}`
+    );
+    const data = await response.json();
+  };
 
   const getCategories = async () => {
     const response = await fetch(`https://dummyjson.com/products/categories`);
@@ -54,10 +59,10 @@ export default function Home({ products }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="w-full h-auto">
-        <div className="h-40 py-16 text-xl font-bold flex justify-center">
+        <div className="pt-16 text-xl font-bold flex justify-center">
           Product Listing
         </div>
-        <div className="mx-32 py-4 flex justify-center">
+        <div className="mx-32 py-10 flex justify-center">
           <input
             type="text"
             value={productName}
@@ -98,21 +103,34 @@ export default function Home({ products }) {
               className=" p-2 border border-gray-900 flex flex-col justify-between h-full rounded"
               key={index}
             >
-              <div>
-                {/* <Image
-                  src={item?.thumbnail}
-                  className="h-20 w-20"
-                  width={50}
-                  height={50}
-                  alt=""
-                /> */}
+              <div className="flex justify-center">
+                <img
+                  src={item.thumbnail}
+                  height={100}
+                  width={100}
+                  className="object-contain"
+                />
               </div>
-              <div className="bg-red-300">{item.title}</div>
+              <div className="bg-red-300 text-center">{item.title}</div>
               <div className="text-sm">{item.description}</div>
               <div>₹ {item.price}</div>
             </div>
             // </Link>
           ))}
+        </div>
+        <div className="py-5 flex justify-center">
+          <div
+            className="px-3"
+            onClick={() => setCurrentItems(currentItems - 30)}
+          >
+            Prev
+          </div>
+          <div
+            className="px-3"
+            onClick={() => setCurrentItems(currentItems + 30)}
+          >
+            Next
+          </div>
         </div>
       </main>
     </>
