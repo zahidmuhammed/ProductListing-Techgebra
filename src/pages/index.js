@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import { Inter } from "@next/font/google";
@@ -5,7 +6,7 @@ import { Inter } from "@next/font/google";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function Home() {
+export default function Home({ products }) {
   return (
     <>
       <Head>
@@ -14,9 +15,30 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex h-screen justify-center items-center">
-        Hey There !
+      <main className="w-full h-auto">
+        <div className="h-40"></div>
+        <div className="mx-32 p-32 grid grid-cols-5">
+          {products?.products.map((item, index) => (
+            <div className="h-auto p-5">
+              <div>{item.title}</div>
+              <div>{item.description}</div>
+              <div>{item.price}</div>
+            </div>
+          ))}
+        </div>
       </main>
     </>
   );
+}
+
+export async function getStaticProps() {
+  const response = await fetch("https://dummyjson.com/products");
+  const data = await response.json();
+
+  // console.log(data);
+  // let data = fetch("https://dummyjson.com/products").then((res) => res.json());
+
+  return {
+    props: { products: data }, // will be passed to the page component as props
+  };
 }
