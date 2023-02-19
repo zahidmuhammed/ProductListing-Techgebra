@@ -1,12 +1,28 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import { Inter } from "@next/font/google";
-// import styles from '@/styles/Home.module.css'
+import Link from "next/link";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home({ products }) {
+  const [productName, setProductName] = useState("");
+  const [productList, setProductList] = useState([]);
+
+  useEffect(() => {
+    setProductList(products);
+  }, []);
+
+  // console.log(products);
+  const onSearchHandle = async () => {
+    const response = await fetch(
+      `https://dummyjson.com/products/search?q=${productName}`
+    );
+    const data = await response.json();
+    setProductList(data);
+  };
+
   return (
     <>
       <Head>
@@ -16,14 +32,47 @@ export default function Home({ products }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="w-full h-auto">
-        <div className="h-40"></div>
-        <div className="mx-32 p-32 grid grid-cols-5">
-          {products?.products.map((item, index) => (
-            <div className="h-auto p-5">
+        <div className="h-40 py-16 text-xl font-bold flex justify-center">
+          Product Listing
+        </div>
+        <div className="mx-32 py-4 flex justify-center">
+          <input
+            type="text"
+            value={productName}
+            onChange={(e) => setProductName(e.target.value)}
+            placeholder="Enter product name"
+            className="outline-none py-1 px-2 rounded-l"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                onSearchHandle();
+              }
+            }}
+          />
+          <button
+            onClick={() => onSearchHandle()}
+            className="bg-slate-500 p-1 rounded-r text-white"
+          >
+            Search
+          </button>
+        </div>
+        <div className="mx-32 px-16 grid grid-cols-2 md:grid-cols-5">
+          {productList?.products?.map((item, index) => (
+            // <Link href={`/products/${item.id}`}>
+            <div className="h-auto p-5" key={index}>
+              <div>
+                {/* <Image
+                  src={item?.thumbnail}
+                  className="h-20 w-20"
+                  width={30}
+                  height={30}
+                  alt=""
+                /> */}
+              </div>
               <div>{item.title}</div>
               <div>{item.description}</div>
               <div>{item.price}</div>
             </div>
+            // </Link>
           ))}
         </div>
       </main>
@@ -31,14 +80,22 @@ export default function Home({ products }) {
   );
 }
 
+// export async function getStaticProps() {
+//   const response = await fetch("https://dummyjson.com/products");
+//   const data = await response.json();
+
+//   console.log(data);
+//   let data = fetch("https://dummyjson.com/products").then((res) => res.json());
+
+//   return {
+//     props: { products: data },
+//   };
+// }                                                                                                                                                                                                                                                                                                 `
+
 export async function getStaticProps() {
   const response = await fetch("https://dummyjson.com/products");
   const data = await response.json();
-
-  // console.log(data);
-  // let data = fetch("https://dummyjson.com/products").then((res) => res.json());
-
   return {
-    props: { products: data }, // will be passed to the page component as props
+    props: { products: data },
   };
 }
